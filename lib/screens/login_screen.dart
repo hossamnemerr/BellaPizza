@@ -16,6 +16,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   bool _hasError = false;
 
   late final List<AnimationController> _keyCtrls;
+  late final List<Animation<double>> _keyScales;
   late final AnimationController _shakeCtrl;
   late final Animation<double> _shakeAnim;
 
@@ -25,6 +26,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     _keyCtrls = List.generate(12, (_) {
       return AnimationController(vsync: this, duration: const Duration(milliseconds: 120));
     });
+    _keyScales = List.generate(12, (i) =>
+        Tween<double>(begin: 1.0, end: 0.85).animate(
+            CurvedAnimation(parent: _keyCtrls[i], curve: Curves.easeInOut)));
     _shakeCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 400));
     _shakeAnim = TweenSequence<double>([
       TweenSequenceItem(tween: Tween(begin: 0.0,   end: -12.0), weight: 1),
@@ -77,27 +81,36 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
     } else {
       HapticFeedback.heavyImpact();
       setState(() => _hasError = true);
+      // Wait for the shake animation and visual feedback to complete
       await _shakeCtrl.forward(from: 0);
-      await Future.delayed(const Duration(milliseconds: 300));
-      setState(() { _digits.clear(); _hasError = false; });
+      await Future.delayed(const Duration(milliseconds: 600));
+      if (mounted) {
+        setState(() {
+          _digits.clear();
+          _hasError = false;
+        });
+      }
     }
   }
 
   Widget _dot(int i) {
     final filled = i < _digits.length;
-    final err = _hasError && filled;
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      curve: Curves.easeOut, width: 18, height: 18,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeOutBack,
+      width: filled ? 22 : 14,
+      height: filled ? 22 : 14,
+      margin: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: err ? AppColors.error : filled ? AppColors.primary : Colors.transparent,
-        border: filled ? null : Border.all(
-            color: AppColors.outline.withValues(alpha: 0.6), width: 2),
-        boxShadow: filled && !err
-            ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.5), blurRadius: 14, spreadRadius: 1)]
-            : err
-            ? [BoxShadow(color: AppColors.error.withValues(alpha: 0.5), blurRadius: 14, spreadRadius: 1)]
+        color: _hasError ? AppColors.error : (filled ? AppColors.gold : Colors.transparent),
+        border: Border.all(
+            color: (filled || _hasError) ? Colors.transparent : AppColors.outline.withOpacity(0.5),
+            width: 2),
+        boxShadow: _hasError
+            ? [BoxShadow(color: AppColors.error.withOpacity(0.4), blurRadius: 12, spreadRadius: 1)]
+            : filled
+            ? [BoxShadow(color: AppColors.gold.withOpacity(0.4), blurRadius: 12, spreadRadius: 1)]
             : null,
       ),
     );
@@ -105,22 +118,24 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
 
   Widget _key({required int idx, String? digit, Widget? child,
     bool transparent = false, IconData? icon, Color? iconColor, VoidCallback? onTap}) {
-    final scale = Tween<double>(begin: 1.0, end: 0.90)
-        .animate(CurvedAnimation(parent: _keyCtrls[idx], curve: Curves.easeInOut));
-    return ScaleTransition(scale: scale,
+    return ScaleTransition(scale: _keyScales[idx],
       child: GestureDetector(
         onTap: onTap ?? () => _onDigit(digit!, idx),
-        child: AspectRatio(aspectRatio: 1,
-          child: Container(
-            decoration: transparent ? null : BoxDecoration(
-              color: AppColors.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(AppRadius.button),
-              border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.6), width: 1),
-            ),
-            child: Center(child: child ?? (digit != null
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          decoration: transparent ? null : BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColors.surfaceContainerHigh,
+            border: Border.all(color: AppColors.outlineVariant.withOpacity(0.5), width: 1.5),
+          ),
+          child: Center(
+            child: child ?? (digit != null
                 ? Text(digit, style: GoogleFonts.oswald(
-                    fontSize: 30, fontWeight: FontWeight.w500, color: AppColors.onSurface, height: 1.0))
-                : Icon(icon, size: 26, color: iconColor ?? AppColors.onSurfaceVariant))),
+                fontSize: 32,
+                fontWeight: FontWeight.w600,
+                color: AppColors.onSurface,
+                height: 1.0))
+                : Icon(icon, size: 28, color: iconColor ?? AppColors.onSurfaceVariant)),
           ),
         ),
       ),
@@ -143,21 +158,33 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         ]),
         actions: [
           Padding(padding: const EdgeInsets.only(right: 16),
-            child: Container(width: 40, height: 40,
-              decoration: BoxDecoration(shape: BoxShape.circle,
-                color: AppColors.surfaceContainerHigh,
-                border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.5), width: 1)),
-              child: const Icon(Icons.person_rounded, color: AppColors.onSurfaceVariant, size: 22))),
+              child: Container(width: 40, height: 40,
+                  decoration: BoxDecoration(shape: BoxShape.circle,
+                      color: AppColors.surfaceContainerHigh,
+                      border: Border.all(color: AppColors.outlineVariant.withOpacity(0.5), width: 1)),
+                  child: const Icon(Icons.person_rounded, color: AppColors.onSurfaceVariant, size: 22))),
         ],
       ),
       body: Stack(children: [
-        // Red glow top-right
-        Align(alignment: Alignment.topRight,
-          child: Transform.translate(offset: const Offset(80, -80),
-            child: ImageFiltered(imageFilter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
-              child: Container(width: 280, height: 280,
-                decoration: BoxDecoration(shape: BoxShape.circle,
-                  color: AppColors.primary.withValues(alpha: 0.12)))))),
+        // Glow top-right using a safer method (radial gradient)
+        Positioned(
+          top: -100,
+          right: -100,
+          child: Container(
+            width: 400,
+            height: 400,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  AppColors.primary.withOpacity(0.15),
+                  AppColors.primary.withOpacity(0.05),
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+        ),
 
         SafeArea(child: Column(children: [
           Expanded(child: SingleChildScrollView(
@@ -168,11 +195,11 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
 
               // Pizza icon header
               Container(width: 72, height: 72,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.primaryContainer.withValues(alpha: 0.3),
-                  border: Border.all(color: AppColors.primary.withValues(alpha: 0.4), width: 1.5)),
-                child: const Icon(Icons.lock_rounded, color: AppColors.primary, size: 32)),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.primaryContainer.withOpacity(0.3),
+                      border: Border.all(color: AppColors.primary.withOpacity(0.4), width: 1.5)),
+                  child: const Icon(Icons.lock_rounded, color: AppColors.primary, size: 32)),
 
               const SizedBox(height: 20),
 
@@ -190,9 +217,10 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                 animation: _shakeAnim,
                 builder: (_, child) => Transform.translate(
                     offset: Offset(_shakeAnim.value, 0), child: child!),
-                child: Row(mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(_pinLength, (i) =>
-                        Padding(padding: EdgeInsets.only(left: i == 0 ? 0 : 18), child: _dot(i)))),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(_pinLength, (i) => _dot(i)),
+                ),
               ),
 
               const SizedBox(height: 36),
@@ -243,9 +271,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
               ),
               const SizedBox(height: 16),
               Center(child: TextButton(
-                onPressed: () {},
-                child: Text('نسيت الرمز السري؟', style: GoogleFonts.nunito(
-                    fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.onSurfaceVariant)))),
+                  onPressed: () {},
+                  child: Text('نسيت الرمز السري؟', style: GoogleFonts.nunito(
+                      fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.onSurfaceVariant)))),
             ]),
           ),
         ])),
