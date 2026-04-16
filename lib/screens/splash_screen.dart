@@ -35,18 +35,44 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: AppColors.background,
     body: Stack(children: [
-      // Warm red glow top-right
-      Align(alignment: Alignment.topRight,
-        child: Transform.translate(offset: const Offset(100, -100),
-          child: ImageFiltered(imageFilter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
-            child: Container(width: 350, height: 350,
-              decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0x22FF3B2F)))))),
+      // Warm red glow top-right (RadialGradient is safer than ImageFiltered)
+      Positioned(
+        top: -100,
+        right: -100,
+        child: Container(
+          width: 450,
+          height: 450,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(
+              colors: [
+                const Color(0xFFFF3B2F).withOpacity(0.15),
+                const Color(0xFFFF3B2F).withOpacity(0.05),
+                Colors.transparent,
+              ],
+            ),
+          ),
+        ),
+      ),
       // Warm gold glow bottom-left
-      Align(alignment: Alignment.bottomLeft,
-        child: Transform.translate(offset: const Offset(-100, 100),
-          child: ImageFiltered(imageFilter: ImageFilter.blur(sigmaX: 80, sigmaY: 80),
-            child: Container(width: 300, height: 300,
-              decoration: const BoxDecoration(shape: BoxShape.circle, color: Color(0x18FFB930)))))),
+      Positioned(
+        bottom: -100,
+        left: -100,
+        child: Container(
+          width: 400,
+          height: 400,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(
+              colors: [
+                const Color(0xFFFFB930).withOpacity(0.12),
+                const Color(0xFFFFB930).withOpacity(0.04),
+                Colors.transparent,
+              ],
+            ),
+          ),
+        ),
+      ),
 
       SafeArea(child: Column(children: [
         Expanded(child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -57,7 +83,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(colors: [
-                  AppColors.primary.withValues(alpha: 0.25),
+                  AppColors.primary.withOpacity(0.25),
                   Colors.transparent]),
               )),
             // Inner red circle
@@ -88,10 +114,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
           // Divider — warm gradient
           FadeTransition(opacity: _sub, child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Container(width: 40, height: 1.5, color: AppColors.primary.withValues(alpha: 0.4)),
+            Container(width: 40, height: 1.5, color: AppColors.primary.withOpacity(0.4)),
             Padding(padding: const EdgeInsets.symmetric(horizontal: 12),
               child: const Icon(Icons.fiber_manual_record, size: 6, color: AppColors.gold)),
-            Container(width: 40, height: 1.5, color: AppColors.primary.withValues(alpha: 0.4)),
+            Container(width: 40, height: 1.5, color: AppColors.primary.withOpacity(0.4)),
           ])),
 
           const SizedBox(height: 16),
