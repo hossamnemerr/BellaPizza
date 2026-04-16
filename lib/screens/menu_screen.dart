@@ -217,6 +217,8 @@ class MenuScreen extends StatefulWidget {
 
 class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
   int _selCat = 0;
+  String? _lastAddedItem;
+  bool _showTopNotif = false;
 
   List<MenuItem> get _visible {
     final cat = kCategories[_selCat];
@@ -273,15 +275,13 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
       imageUrl: item.imageUrl, unitPrice: item.price,
     ));
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Row(children: [
-          const Icon(Icons.check_circle_rounded, color: AppColors.gold, size: 18),
-          const SizedBox(width: 8),
-          Text('${item.name} أُضيف', style: GoogleFonts.nunito(
-              fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.onSurface)),
-        ]),
-        duration: const Duration(milliseconds: 1200),
-      ));
+      setState(() {
+        _lastAddedItem = item.name;
+        _showTopNotif = true;
+      });
+      Future.delayed(const Duration(seconds: 2), () {
+        if (mounted) setState(() => _showTopNotif = false);
+      });
     }
   }
 
@@ -302,7 +302,7 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
             padding: const EdgeInsets.fromLTRB(16, 24, 16, 10),
             child: Row(children: [
               Container(width: 3, height: 16,
-                decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(2))),
+                decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(2))),
               const SizedBox(width: 8),
               Text(_selCat == 0 ? 'القائمة كاملة' : kCategories[_selCat].label,
                 style: GoogleFonts.oswald(fontSize: 14, fontWeight: FontWeight.w600,
@@ -312,13 +312,36 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
           _visible.isEmpty
               ? SliverToBoxAdapter(child: _emptyState())
               : SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 180),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
                   sliver: SliverList.separated(
                     itemCount: _visible.length,
                     separatorBuilder: (context, index) => const SizedBox(height: 8),
                     itemBuilder: (context, i) => _itemCard(_visible[i]))),
         ]),
-        Positioned(left: 0, right: 0, bottom: 0, child: _checkoutBar(cart.totalCount)),
+        // Bottom-aligned Notification (Above Nav Bar)
+        AnimatedPositioned(
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutBack,
+          bottom: _showTopNotif ? 62 : -100,
+          left: 16, right: 16,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceContainerHighest.withOpacity(0.95),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: AppColors.gold.withOpacity(0.4), width: 1.5),
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 15, offset: const Offset(0, 5))],
+            ),
+            child: Row(children: [
+              const Icon(Icons.check_circle_rounded, color: AppColors.gold, size: 22),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text('تم إضافة $_lastAddedItem لطلبك', style: GoogleFonts.nunito(
+                    fontSize: 14, fontWeight: FontWeight.w800, color: AppColors.onSurface)),
+              ),
+            ]),
+          ),
+        ),
       ]),
       bottomNavigationBar: const BottomNavBar(currentIndex: 1),
     );
@@ -328,10 +351,10 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
     backgroundColor: AppColors.background, elevation: 0, scrolledUnderElevation: 0,
     automaticallyImplyLeading: false, titleSpacing: 16,
     title: Row(children: [
-      const Icon(Icons.local_pizza_rounded, color: AppColors.gold, size: 24),
+      const Icon(Icons.local_pizza_rounded, color: AppColors.primary, size: 24),
       const SizedBox(width: 10),
       Text('SLICE PIZZA', style: GoogleFonts.oswald(
-          fontSize: 18, fontWeight: FontWeight.w600, color: AppColors.gold, letterSpacing: 1.5)),
+          fontSize: 18, fontWeight: FontWeight.w600, color: AppColors.onSurface, letterSpacing: 1.5)),
     ]),
     actions: [
       Stack(clipBehavior: Clip.none, children: [
@@ -346,7 +369,7 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
       Padding(padding: const EdgeInsets.only(right: 14),
         child: Container(width: 36, height: 36,
           decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.surfaceContainerHigh,
-              border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.5))),
+              border: Border.all(color: AppColors.outlineVariant.withOpacity(0.5))),
           child: const Icon(Icons.person_rounded, color: AppColors.onSurfaceVariant, size: 20))),
     ],
   );
@@ -370,7 +393,7 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
               color: isActive ? null : AppColors.surfaceContainerHigh,
               borderRadius: BorderRadius.circular(8),
               border: isActive ? null : Border.all(
-                  color: AppColors.outlineVariant.withValues(alpha: 0.4), width: 1),
+                  color: AppColors.outlineVariant.withOpacity(0.4), width: 1),
             ),
             child: Row(mainAxisSize: MainAxisSize.min, children: [
               Icon(cat.icon, size: 15,
@@ -392,13 +415,10 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
         child: Stack(fit: StackFit.expand, children: [
           Image.network(item.imageUrl, fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) => Container(color: AppColors.surfaceContainerHigh)),
-          // Warm dark gradient
+          // Dark gradient overlay
           Container(decoration: const BoxDecoration(gradient: LinearGradient(
               begin: Alignment.topRight, end: Alignment.bottomLeft,
-              colors: [Color(0x00000000), Color(0xDD1A0800)], stops: [0.2, 1.0]))),
-          // Red accent line at bottom
-          Positioned(bottom: 0, left: 0, right: 0,
-            child: Container(height: 3, color: AppColors.primary)),
+              colors: [Color(0x00000000), Color(0xDD120C04)], stops: [0.2, 1.0]))),
           Padding(padding: const EdgeInsets.all(20), child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.end,
@@ -406,7 +426,7 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
               // Tags
               Wrap(spacing: 6, children: item.chips.map((c) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.9),
+                decoration: BoxDecoration(color: AppColors.primary.withOpacity(0.9),
                     borderRadius: BorderRadius.circular(4)),
                 child: Text(c, style: GoogleFonts.nunito(fontSize: 9, fontWeight: FontWeight.w800,
                     color: AppColors.onPrimary, letterSpacing: 0.5)))).toList()),
@@ -443,7 +463,7 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
         decoration: BoxDecoration(
           color: AppColors.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(AppRadius.card),
-          border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.4), width: 1),
+          border: Border.all(color: AppColors.outlineVariant.withOpacity(0.4), width: 1),
         ),
         child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
           // Image
@@ -466,9 +486,9 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
               Wrap(spacing: 5, runSpacing: 4, children: item.chips.map((c) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
                 decoration: BoxDecoration(
-                  color: AppColors.primaryContainer.withValues(alpha: 0.3),
+                  color: AppColors.primaryContainer.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(4),
-                  border: Border.all(color: AppColors.primary.withValues(alpha: 0.3), width: 1)),
+                  border: Border.all(color: AppColors.primary.withOpacity(0.3), width: 1)),
                 child: Text(c, style: GoogleFonts.nunito(fontSize: 9, fontWeight: FontWeight.w700,
                     color: AppColors.primary, letterSpacing: 0.3)))).toList()),
             ],
@@ -498,35 +518,6 @@ class _MenuScreenState extends State<MenuScreen> with TickerProviderStateMixin {
       Text('لا توجد عناصر في هذا القسم',
           style: GoogleFonts.nunito(fontSize: 13, color: AppColors.onSurfaceVariant)),
     ])));
-
-  Widget _checkoutBar(int count) => ClipRect(
-    child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-        decoration: BoxDecoration(
-          color: AppColors.surface.withValues(alpha: 0.94),
-          boxShadow: AppShadows.floatingBar,
-          border: Border(top: BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.3), width: 1)),
-        ),
-        child: GestureDetector(
-          onTap: () => Navigator.of(context).pushNamed('/orders'),
-          child: Container(width: double.infinity, height: 54,
-            decoration: BoxDecoration(
-                gradient: AppGradients.primaryCta,
-                borderRadius: BorderRadius.circular(AppRadius.button),
-                boxShadow: AppShadows.primaryGlow),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              const Icon(Icons.shopping_bag_rounded, color: AppColors.onPrimary, size: 20),
-              const SizedBox(width: 10),
-              Text(count > 0 ? 'عرض الطلب ($count صنف)' : 'الذهاب للطلب',
-                style: GoogleFonts.oswald(fontSize: 17, fontWeight: FontWeight.w600,
-                    color: AppColors.onPrimary, letterSpacing: 1.0)),
-            ]),
-          ),
-        ),
-      ),
-    ),
-  );
 }
 
 class _AddBtn extends StatelessWidget {
@@ -535,8 +526,8 @@ class _AddBtn extends StatelessWidget {
   Widget build(BuildContext context) => Container(
     width: 36, height: 36,
     decoration: BoxDecoration(
-      color: AppColors.primaryContainer.withValues(alpha: 0.3),
+      color: AppColors.surfaceContainerHighest,
       borderRadius: BorderRadius.circular(8),
-      border: Border.all(color: AppColors.primary.withValues(alpha: 0.5), width: 1)),
-    child: const Icon(Icons.add_rounded, color: AppColors.primary, size: 20));
+      border: Border.all(color: AppColors.gold.withOpacity(0.5), width: 1)),
+    child: const Icon(Icons.add_rounded, color: AppColors.gold, size: 20));
 }
