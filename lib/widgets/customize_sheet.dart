@@ -8,7 +8,7 @@ void showCustomizeSheet(BuildContext context, {CartItem? prefillItem}) =>
     showModalBottomSheet(
       context: context, isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withValues(alpha: 0.65),
+      barrierColor: Colors.black.withOpacity(0.65),
       builder: (context) => CustomizeSheet(prefillItem: prefillItem),
     );
 
@@ -88,13 +88,13 @@ class _CustomizeSheetState extends State<CustomizeSheet> with TickerProviderStat
       decoration: BoxDecoration(
         color: AppColors.surfaceContainerHigh,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        border: Border(top: BorderSide(color: AppColors.primary.withValues(alpha: 0.4), width: 2)),
+        border: Border(top: BorderSide(color: AppColors.gold.withOpacity(0.4), width: 2)),
       ),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         // Drag handle
         Padding(padding: const EdgeInsets.only(top: 12, bottom: 4),
           child: Center(child: Container(width: 44, height: 5,
-            decoration: BoxDecoration(color: AppColors.outline.withValues(alpha: 0.4),
+            decoration: BoxDecoration(color: AppColors.outline.withOpacity(0.4),
                 borderRadius: BorderRadius.circular(3))))),
         // Header
         Padding(padding: const EdgeInsets.fromLTRB(20, 8, 12, 16), child: Row(children: [
@@ -105,7 +105,7 @@ class _CustomizeSheetState extends State<CustomizeSheet> with TickerProviderStat
             child: Container(width: 38, height: 38,
               decoration: BoxDecoration(shape: BoxShape.circle,
                 color: AppColors.surfaceContainerHighest,
-                border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.5))),
+                border: Border.all(color: AppColors.outlineVariant.withOpacity(0.5))),
               child: const Icon(Icons.close_rounded, color: AppColors.onSurface, size: 20))),
         ])),
         // Scrollable body
@@ -142,7 +142,7 @@ class _CustomizeSheetState extends State<CustomizeSheet> with TickerProviderStat
             // Toppings section
             Row(children: [
               Container(width: 3, height: 14,
-                decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(2))),
+                decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(2))),
               const SizedBox(width: 8),
               Text('إضافات البيتزا', style: GoogleFonts.oswald(
                   fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.onSurface, letterSpacing: 0.5)),
@@ -151,7 +151,7 @@ class _CustomizeSheetState extends State<CustomizeSheet> with TickerProviderStat
                 decoration: BoxDecoration(
                   color: AppColors.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.5))),
+                  border: Border.all(color: AppColors.outlineVariant.withOpacity(0.5))),
                 child: Text('اختياري', style: GoogleFonts.nunito(
                     fontSize: 10, fontWeight: FontWeight.w700,
                     color: AppColors.onSurfaceVariant, letterSpacing: 0.5))),
@@ -166,8 +166,8 @@ class _CustomizeSheetState extends State<CustomizeSheet> with TickerProviderStat
                   color: t.on ? null : AppColors.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8),
                   border: t.on ? null : Border.all(
-                      color: AppColors.outlineVariant.withValues(alpha: 0.5), width: 1),
-                  boxShadow: t.on ? [BoxShadow(color: AppColors.primary.withValues(alpha: 0.25),
+                      color: AppColors.outlineVariant.withOpacity(0.5), width: 1),
+                  boxShadow: t.on ? [BoxShadow(color: AppColors.primary.withOpacity(0.25),
                       blurRadius: 10, offset: const Offset(0, 3))] : null),
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   Icon(t.on ? Icons.check_circle_rounded : Icons.add_rounded,
@@ -180,7 +180,7 @@ class _CustomizeSheetState extends State<CustomizeSheet> with TickerProviderStat
                     const SizedBox(width: 6),
                     Text('+${t.price.toStringAsFixed(0)} ج', style: GoogleFonts.nunito(
                         fontSize: 11, fontWeight: FontWeight.w800,
-                        color: t.on ? AppColors.onPrimary.withValues(alpha: 0.8) : AppColors.gold)),
+                        color: t.on ? AppColors.onPrimary.withOpacity(0.8) : AppColors.gold)),
                   ],
                 ]),
               ),
@@ -207,7 +207,7 @@ class _CustomizeSheetState extends State<CustomizeSheet> with TickerProviderStat
                     color: AppColors.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: e.value.on ? AppColors.primary.withValues(alpha: 0.5) : AppColors.outlineVariant.withValues(alpha: 0.4),
+                      color: e.value.on ? AppColors.primary.withOpacity(0.5) : AppColors.outlineVariant.withOpacity(0.4),
                       width: e.value.on ? 1.5 : 1),
                   ),
                   child: Row(children: [
@@ -219,9 +219,9 @@ class _CustomizeSheetState extends State<CustomizeSheet> with TickerProviderStat
                       decoration: BoxDecoration(shape: BoxShape.circle,
                         color: e.value.on ? AppColors.primary : Colors.transparent,
                         border: e.value.on ? null : Border.all(
-                            color: AppColors.outline.withValues(alpha: 0.6), width: 2),
+                            color: AppColors.outline.withOpacity(0.6), width: 2),
                         boxShadow: e.value.on ? [BoxShadow(
-                            color: AppColors.primary.withValues(alpha: 0.35), blurRadius: 8)] : null),
+                            color: AppColors.primary.withOpacity(0.35), blurRadius: 8)] : null),
                       child: e.value.on ? const Icon(Icons.check_rounded,
                           size: 14, color: AppColors.onPrimary) : null),
                   ]),
@@ -234,7 +234,7 @@ class _CustomizeSheetState extends State<CustomizeSheet> with TickerProviderStat
             // Special instructions
             Row(children: [
               Container(width: 3, height: 14,
-                decoration: BoxDecoration(color: AppColors.outlineVariant, borderRadius: BorderRadius.circular(2))),
+                decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(2))),
               const SizedBox(width: 8),
               Text('تعليمات خاصة', style: GoogleFonts.oswald(
                   fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.onSurface, letterSpacing: 0.5)),
@@ -244,7 +244,7 @@ class _CustomizeSheetState extends State<CustomizeSheet> with TickerProviderStat
               decoration: BoxDecoration(
                 color: AppColors.surface,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.4), width: 1)),
+                border: Border.all(color: AppColors.outlineVariant.withOpacity(0.4), width: 1)),
               child: TextFormField(
                 minLines: 3, maxLines: 5,
                 style: GoogleFonts.nunito(fontSize: 14, color: AppColors.onSurface),
@@ -255,7 +255,7 @@ class _CustomizeSheetState extends State<CustomizeSheet> with TickerProviderStat
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
                   enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
                   focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14),
-                      borderSide: BorderSide(color: AppColors.primary.withValues(alpha: 0.5), width: 2)),
+                      borderSide: BorderSide(color: AppColors.gold.withOpacity(0.5), width: 2)),
                   contentPadding: const EdgeInsets.all(16),
                 ),
               ),
@@ -267,7 +267,7 @@ class _CustomizeSheetState extends State<CustomizeSheet> with TickerProviderStat
         Container(
           decoration: BoxDecoration(
             color: AppColors.surfaceContainerHigh,
-            border: Border(top: BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.4)))),
+            border: Border(top: BorderSide(color: AppColors.outlineVariant.withOpacity(0.4)))),
           padding: EdgeInsets.fromLTRB(20, 16, 20, 20 + inset),
           child: Row(children: [
             // Qty stepper
@@ -276,7 +276,7 @@ class _CustomizeSheetState extends State<CustomizeSheet> with TickerProviderStat
               decoration: BoxDecoration(
                 color: AppColors.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.5))),
+                border: Border.all(color: AppColors.outlineVariant.withOpacity(0.5))),
               child: Row(mainAxisSize: MainAxisSize.min, children: [
                 _QtyBtn(icon: Icons.remove_rounded, enabled: _qty > 1,
                     onTap: () async { if (_qty <= 1) return; await _bump(); setState(() => _qty--); }),
