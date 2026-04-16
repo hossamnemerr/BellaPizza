@@ -22,7 +22,7 @@ class BottomNavBar extends StatelessWidget implements PreferredSizeWidget {
     child: Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        border: Border(top: BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.5), width: 1)),
+        border: Border(top: BorderSide(color: AppColors.outlineVariant.withOpacity(0.5), width: 1)),
       ),
       child: SafeArea(
         top: false,
@@ -73,7 +73,7 @@ class _NavBtnState extends State<_NavBtn> with SingleTickerProviderStateMixin {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
           decoration: BoxDecoration(
-            color: widget.isActive ? AppColors.primary.withValues(alpha: 0.18) : Colors.transparent,
+            color: widget.isActive ? AppColors.primary.withOpacity(0.18) : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Icon(widget.icon, size: 22,
