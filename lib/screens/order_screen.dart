@@ -100,7 +100,7 @@ class _OrderScreenState extends State<OrderScreen> with TickerProviderStateMixin
     actions: [Padding(padding: const EdgeInsets.only(right: 14),
       child: Container(width: 36, height: 36,
         decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.surfaceContainerHigh,
-            border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.5))),
+            border: Border.all(color: AppColors.outlineVariant.withOpacity(0.5))),
         child: const Icon(Icons.person_rounded, color: AppColors.onSurfaceVariant, size: 20)))],
   );
 
@@ -108,7 +108,7 @@ class _OrderScreenState extends State<OrderScreen> with TickerProviderStateMixin
     Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Row(children: [
         Container(width: 3, height: 14,
-          decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(2))),
+          decoration: BoxDecoration(color: AppColors.gold, borderRadius: BorderRadius.circular(2))),
         const SizedBox(width: 8),
         Text('الجلسة الحالية', style: GoogleFonts.nunito(
             fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.primary, letterSpacing: 1.5)),
@@ -132,7 +132,7 @@ class _OrderScreenState extends State<OrderScreen> with TickerProviderStateMixin
       decoration: BoxDecoration(
         color: AppColors.surfaceContainerHigh,
         borderRadius: BorderRadius.circular(AppRadius.card),
-        border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.4), width: 1),
+        border: Border.all(color: AppColors.outlineVariant.withOpacity(0.4), width: 1),
       ),
       child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
         ClipRRect(borderRadius: BorderRadius.circular(10),
@@ -194,7 +194,7 @@ class _OrderScreenState extends State<OrderScreen> with TickerProviderStateMixin
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.5), width: 1)),
+        border: Border.all(color: AppColors.outlineVariant.withOpacity(0.5), width: 1)),
       child: Row(mainAxisSize: MainAxisSize.min, children: [
         btn(Icons.remove, false), const SizedBox(width: 4),
         SizedBox(width: 26, child: Text(item.quantity.toString().padLeft(2, '0'),
@@ -212,9 +212,9 @@ class _OrderScreenState extends State<OrderScreen> with TickerProviderStateMixin
       child: BackdropFilter(filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
           decoration: BoxDecoration(
-            color: AppColors.surfaceContainerHigh.withValues(alpha: 0.96),
+            color: AppColors.surfaceContainerHigh.withOpacity(0.96),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.5), width: 1),
+            border: Border.all(color: AppColors.outlineVariant.withOpacity(0.5), width: 1),
             boxShadow: AppShadows.modal,
           ),
           padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
@@ -253,7 +253,7 @@ class _OrderScreenState extends State<OrderScreen> with TickerProviderStateMixin
     Container(width: 80, height: 80,
       decoration: BoxDecoration(shape: BoxShape.circle,
           color: AppColors.surfaceContainerHigh,
-          border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.4))),
+          border: Border.all(color: AppColors.outlineVariant.withOpacity(0.4))),
       child: const Icon(Icons.shopping_bag_outlined, size: 36, color: AppColors.outlineVariant)),
     const SizedBox(height: 16),
     Text('لا توجد طلبات حتى الآن', style: GoogleFonts.oswald(
