@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "570794251492",
+    "project_id": "bellapizza-98bac",
+    "storage_bucket": "bellapizza-98bac.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570794251492:android:f00a98f12d9da7cf6548f1",
+        "android_client_info": {
+          "package_name": "com.example.xcore_restaurant"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYpuZh7JaIb1LwN7HJN0VtzLS4HCtCLoo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
