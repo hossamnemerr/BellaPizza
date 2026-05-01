@@ -1,4 +1,4 @@
-# XCORE-restaurant
+# BellaPizza-restaurant
 POS app for a restaurant using flutter
 
 Team member:
