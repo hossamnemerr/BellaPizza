@@ -2,6 +2,6 @@
 POS app for a restaurant using flutter
 
 Team member:
-HossamEldeen Ahmed,
-Yousif Sarahan,
-Mohmamed Elfadel
+ِAbdullah Ghazal,
+Youssef Ashraf,
+Youssef Mustafa
